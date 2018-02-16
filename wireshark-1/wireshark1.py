@@ -15,7 +15,9 @@ import dpkt
 import socket
 import argparse 
 from collections import OrderedDict
+# import for sorting dictionaries
 import operator
+import csv
 
 # this helper method will turn an IP address into a string
 def inet_to_str(inet):
@@ -80,11 +82,24 @@ def main():
             list_of_ip_tcp_ports[ip_tcp] += 1
             
         # sort each dictionary
-        sorted_list_of_ips = sorted(list_of_ips.items(), key=operator.itemgetter(1), reverse=True)
+        # sorted_list_of_ips = sorted(list_of_ips.items(), key=operator.itemgetter(1), reverse=True)
+        sorted_list_of_ips = sorted(list_of_ips.values(), reverse=True)
+        sorted_ips_name = sorted(list_of_ips, key=list_of_ips.__getitem__, reverse=True)
         sorted_list_of_tcp_ports = sorted(list_of_tcp_ports.items(), key=operator.itemgetter(1), reverse=True)
         sorted_list_of_ip_tcp_ports = sorted(list_of_ip_tcp_ports.items(), key=operator.itemgetter(1), reverse=True)
-    
-    
+            
+    # output
+    output_filename = filename.split('.')
+    count = 0
+    with open(output_filename[0] + "-result.txt", "w") as text_file:
+        text_file.write("CS 352 Wireshark, part 1\n")
+        text_file.write("Total number of packets, %s\n" % number_of_packets)
+        text_file.write("Source IP addresse, count\n")
+        for key in sorted_list_of_ips:
+            text_file.write(sorted_ips_name[count])
+            text_file.write(",%s" % sorted_list_of_ips[count])
+            text_file.write("\n")
+            count += 1
     
 # execute a main function in Python
 if __name__ == "__main__":

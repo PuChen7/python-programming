@@ -15,6 +15,7 @@ import dpkt
 import socket
 import argparse 
 from collections import OrderedDict
+import operator
 
 # this helper method will turn an IP address into a string
 def inet_to_str(inet):
@@ -44,11 +45,9 @@ def main():
 
     # this main loop reads the packets one at a time from the pcap file
     for timestamp, packet in input_data:
-        # ... your code goes here ...
         number_of_packets = number_of_packets + 1
-        # Print out the timestamp in UTC
 
-        # Unpack the Ethernet frame (mac src/dst, ethertype)
+        # Unpack the Ethernet frame
         eth = dpkt.ethernet.Ethernet(packet)
 
         # Make sure the Ethernet frame contains an IP packet
@@ -56,28 +55,37 @@ def main():
             print 'Non IP Packet type not supported %s\n' % eth.data.__class__.__name__
             continue
 
-        # Now unpack the data within the Ethernet frame (the IP packet)
-        # Pulling out src, dst, length, fragment info, TTL, and Protocol
+        # unpack data in the Ethernet frame (the IP packet) then extract data
         ip = eth.data
-
-        # Pull out fragment information (flags and offset all packed into off field, so use bitmasks)
-        do_not_fragment = bool(ip.off & dpkt.ip.IP_DF)
-        more_fragments = bool(ip.off & dpkt.ip.IP_MF)
-        fragment_offset = ip.off & dpkt.ip.IP_OFFMASK
-
-        # Print out the info
-        print 'IP: %s -> %s' % \
-              (inet_to_str(ip.src), inet_to_str(ip.dst))
-              
         
+        # store the source ip into the dictionary
+        if inet_to_str(ip.src) not in list_of_ips:
+            list_of_ips[inet_to_str(ip.src)] = 1    # set the new element
+        else:
+            list_of_ips[inet_to_str(ip.src)] += 1 # increment the count
+        
+        # store the destination tcp ports
         if ip.p == dpkt.ip.IP_PROTO_TCP:
                     tcp = ip.data
-                    print('src port:{}, dst port:{}'.format(
-                        tcp.sport,
-                        tcp.dport
-                        ))
-        print "\n"
-    print "number of packets ", number_of_packets
+                    if tcp.dport not in list_of_tcp_ports:
+                        list_of_tcp_ports[tcp.dport] = 1
+                    else:
+                        list_of_tcp_ports[tcp.dport] += 1
+
+        ip_tcp = inet_to_str(ip.src) + ":" + str(tcp.dport)
+        
+        if ip_tcp not in list_of_ip_tcp_ports:
+            list_of_ip_tcp_ports[ip_tcp] = 1
+        else:
+            list_of_ip_tcp_ports[ip_tcp] += 1
+            
+        # sort each dictionary
+        sorted_list_of_ips = sorted(list_of_ips.items(), key=operator.itemgetter(1), reverse=True)
+        sorted_list_of_tcp_ports = sorted(list_of_tcp_ports.items(), key=operator.itemgetter(1), reverse=True)
+        sorted_list_of_ip_tcp_ports = sorted(list_of_ip_tcp_ports.items(), key=operator.itemgetter(1), reverse=True)
+    
+    
+    
 # execute a main function in Python
 if __name__ == "__main__":
     main()    

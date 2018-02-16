@@ -43,13 +43,41 @@ def main():
     input_data=dpkt.pcap.Reader(open(filename,'r'))
 
     # this main loop reads the packets one at a time from the pcap file
-    count = 0
     for timestamp, packet in input_data:
         # ... your code goes here ...
-        print packet
-        count = count + 1
-    print "number of packets", count
+        number_of_packets = number_of_packets + 1
+        # Print out the timestamp in UTC
 
+        # Unpack the Ethernet frame (mac src/dst, ethertype)
+        eth = dpkt.ethernet.Ethernet(packet)
+
+        # Make sure the Ethernet frame contains an IP packet
+        if not isinstance(eth.data, dpkt.ip.IP):
+            print 'Non IP Packet type not supported %s\n' % eth.data.__class__.__name__
+            continue
+
+        # Now unpack the data within the Ethernet frame (the IP packet)
+        # Pulling out src, dst, length, fragment info, TTL, and Protocol
+        ip = eth.data
+
+        # Pull out fragment information (flags and offset all packed into off field, so use bitmasks)
+        do_not_fragment = bool(ip.off & dpkt.ip.IP_DF)
+        more_fragments = bool(ip.off & dpkt.ip.IP_MF)
+        fragment_offset = ip.off & dpkt.ip.IP_OFFMASK
+
+        # Print out the info
+        print 'IP: %s -> %s' % \
+              (inet_to_str(ip.src), inet_to_str(ip.dst))
+              
+        
+        if ip.p == dpkt.ip.IP_PROTO_TCP:
+                    tcp = ip.data
+                    print('src port:{}, dst port:{}'.format(
+                        tcp.sport,
+                        tcp.dport
+                        ))
+        print "\n"
+    print "number of packets ", number_of_packets
 # execute a main function in Python
 if __name__ == "__main__":
     main()    

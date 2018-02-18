@@ -93,11 +93,12 @@ def main():
         sorted_list_of_ip_tcp_ports = sorted(list_of_ip_tcp_ports.values(), reverse=True)
         sorted_ip_tcp_ports_name = sorted(list_of_ip_tcp_ports, key=list_of_ip_tcp_ports.__getitem__, reverse=True)
         
-        print "src: ", inet_to_str(ip.src)
-        print "src port: ", tcp.sport
-        print "dest port: ", tcp.dport
-        print "des", inet_to_str(ip.dst)
-        print "\n"
+        if inet_to_str(ip.src) == "145.254.160.237":
+            print "src: ", inet_to_str(ip.src)
+            print "src port: ", tcp.sport
+            print "dest port: ", tcp.dport
+            print "des", inet_to_str(ip.dst)
+            print "\n"
         
     # output
     output_filename = filename.split('.')

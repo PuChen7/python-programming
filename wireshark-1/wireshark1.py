@@ -49,9 +49,9 @@ def main():
         # Unpack the Ethernet frame
         eth = dpkt.ethernet.Ethernet(packet)
 
-        # Make sure the Ethernet frame contains an IP packet
+        # # Make sure the Ethernet frame contains an IP packet
         if not isinstance(eth.data, dpkt.ip.IP):
-            print 'Non IP Packet type not supported %s\n' % eth.data.__class__.__name__
+            #print 'Non IP Packet type not supported %s\n' % eth.data.__class__.__name__
             continue
 
         # unpack data in the Ethernet frame (the IP packet) then extract data

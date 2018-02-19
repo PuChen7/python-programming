@@ -16,7 +16,6 @@ import socket
 import argparse 
 from collections import OrderedDict
 
-
 # this helper method will turn an IP address into a string
 def inet_to_str(inet):
     # First try ipv4 and then ipv6

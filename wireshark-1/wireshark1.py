@@ -15,9 +15,7 @@ import dpkt
 import socket
 import argparse 
 from collections import OrderedDict
-# import for sorting dictionaries
-import operator
-import csv
+
 
 # this helper method will turn an IP address into a string
 def inet_to_str(inet):
@@ -97,17 +95,10 @@ def main():
         sorted_list_of_ip_tcp_ports = sorted(list_of_ip_tcp_ports.values(), reverse=True)
         sorted_ip_tcp_ports_name = sorted(list_of_ip_tcp_ports, key=list_of_ip_tcp_ports.__getitem__, reverse=True)
         
-        if inet_to_str(ip.src) == "145.254.160.237":
-            print "src: ", inet_to_str(ip.src)
-            print "src port: ", tcp.sport
-            print "dest port: ", tcp.dport
-            print "des", inet_to_str(ip.dst)
-            print "\n"
-        
     # output
     output_filename = filename.split('.')
     count = 0
-    with open(output_filename[0] + "-result.txt", "w") as text_file:
+    with open("output-" + output_filename[0] + ".txt", "w") as text_file:
         text_file.write("CS 352 Wireshark, part 1\n")
         text_file.write("Total number of packets, %s\n" % number_of_packets)
         text_file.write("Source IP addresse,count\n")

@@ -33,7 +33,7 @@ def main():
     list_of_ips = dict()
     list_of_tcp_ports = dict()
     list_of_ip_tcp_ports = dict()
-
+    
     # parse all the arguments to the client 
     parser = argparse.ArgumentParser(description='CS 352 Wireshark Assignment 1')
     parser.add_argument('-f','--filename', help='pcap file to input', required=True)
@@ -59,6 +59,10 @@ def main():
 
         # unpack data in the Ethernet frame (the IP packet) then extract data
         ip = eth.data
+        
+        # filter out 
+        if ip.p==dpkt.ip.IP_PROTO_UDP:
+            continue
         
         # store the source ip into the dictionary
         if inet_to_str(ip.src) not in list_of_ips:

@@ -51,7 +51,6 @@ def main():
 
         # # Make sure the Ethernet frame contains an IP packet
         if not isinstance(eth.data, dpkt.ip.IP):
-            #print 'Non IP Packet type not supported %s\n' % eth.data.__class__.__name__
             continue
 
         # unpack data in the Ethernet frame (the IP packet) then extract data
@@ -95,31 +94,28 @@ def main():
         sorted_ip_tcp_ports_name = sorted(list_of_ip_tcp_ports, key=list_of_ip_tcp_ports.__getitem__, reverse=True)
         
     # output
-    output_filename = filename.split('.')
+    #output_filename = filename.split('.')
     count = 0
-    with open("output-" + output_filename[0] + ".txt", "w") as text_file:
-        text_file.write("CS 352 Wireshark, part 1\n")
-        text_file.write("Total number of packets, %s\n" % number_of_packets)
-        text_file.write("Source IP addresse,count\n")
-        # output ips
-        for key in sorted_list_of_ips:
-            text_file.write(sorted_ips_name[count])
-            text_file.write(",%s\n" % sorted_list_of_ips[count])
-            count += 1
-        # output tcp ports
-        text_file.write("Destination TCP ports,count\n")
-        count = 0   # reuse 
-        for key in sorted_list_of_tcp_ports:
-            text_file.write(str(sorted_tcp_ports_name[count]))
-            text_file.write(",%s\n" % sorted_list_of_tcp_ports[count])
-            count += 1
-        # ouput ip/tcp
-        text_file.write("Source IPs/Destination TCP ports,count\n")
-        count = 0
-        for key in sorted_list_of_ip_tcp_ports:
-            text_file.write(str(sorted_ip_tcp_ports_name[count]))
-            text_file.write(",%s\n" % sorted_list_of_ip_tcp_ports[count])
-            count += 1
+    #with open("output-" + output_filename[0] + ".txt", "w") as text_file:
+    print("CS 352 Wireshark, part 1")
+    print("Total number of packets, %s" % number_of_packets)
+    print("Source IP addresse,count")
+    # output ips
+    for key in sorted_list_of_ips:
+        print("%s,%s" % (sorted_ips_name[count], sorted_list_of_ips[count]))
+        count += 1
+    # output tcp ports
+    print("Destination TCP ports,count")
+    count = 0   # reuse 
+    for key in sorted_list_of_tcp_ports:
+        print("%s,%s" % (str(sorted_tcp_ports_name[count]), sorted_list_of_tcp_ports[count]))
+        count += 1
+    # ouput ip/tcp
+    print("Source IPs/Destination TCP ports,count")
+    count = 0
+    for key in sorted_list_of_ip_tcp_ports:
+        print("%s,%s" % (str(sorted_ip_tcp_ports_name[count]),sorted_list_of_ip_tcp_ports[count]))
+        count += 1
 # execute a main function in Python
 if __name__ == "__main__":
     main()    
